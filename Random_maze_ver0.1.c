@@ -6,6 +6,7 @@
 //プロトタイプ宣言
 int SetPillar(int m, int n,int MAP[][m]);
 int Opening(void);
+int RandomWall(int pillar_num, int NO_DUPLICATION_RAND[pillar_num]);
 
 int main(){
   int n = 31;
@@ -18,7 +19,8 @@ int main(){
   pillar_num = SetPillar(m,n,MAP);
   printf("%d\n",pillar_num);
 
-  int NO_DUPLICATIONRAND[pillar_num];
+  int NO_DUPLICATION_RAND[pillar_num];
+  RandomWall(pillar_num, NO_DUPLICATION_RAND);
 
   HgOpen(1000,700);
 
@@ -49,4 +51,9 @@ int SetPillar(int m, int n ,int MAP[][m]){
     }
   }
   return pillar_num;
+}
+
+int RandomWall(int pillar_num, int NO_DUPLICATION_RAND[pillar_num]){
+  int i;
+  return 0;
 }
