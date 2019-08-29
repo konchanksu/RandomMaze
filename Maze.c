@@ -288,20 +288,14 @@ int check_color(int color){
 }
 
 //　描写、　使い回し推奨
-int discription(int meiroarray[][ARRAY_SIZE_Y], int first){
+int discription(int meiroarray[][ARRAY_SIZE_Y]){
     int color;
     int i, j;
     for(i = 0; i < ARRAY_SIZE_X; i++){
         for(j = 0; j < ARRAY_SIZE_Y; j++){
-            if(meiroarray[i][j] == START || meiroarray[i][j] == GOAL || first != 1){
-                color = meiroarray[i][j];
-                check_color(color);
-                HgBoxFill(MAP_OUT_BLANK + i * BOXSIZE, MAP_OUT_BLANK + j * BOXSIZE, BOXSIZE, BOXSIZE, 1);
-            }else{
-                color = meiroarray[i][j];
-                check_color(color);
-                HgBoxFill(MAP_OUT_BLANK + i * BOXSIZE, MAP_OUT_BLANK + j * BOXSIZE, BOXSIZE, BOXSIZE, 1);
-            }
+            color = meiroarray[i][j];
+            check_color(color);
+            HgBoxFill(MAP_OUT_BLANK + i * BOXSIZE, MAP_OUT_BLANK + j * BOXSIZE, BOXSIZE, BOXSIZE, 1);
         }
     }
     return 0;
@@ -314,7 +308,6 @@ int main(){
     srandom(time(NULL));
     int meiroarray[ARRAY_SIZE_X][ARRAY_SIZE_Y] = {0};
     int now_position;
-    int first = 1;
     coord_t coord_pillar[pillar_max];
     bfs_st now_positions[10000];
     bfs_st queue_position[10000];
@@ -327,13 +320,12 @@ int main(){
     extend_wall(meiroarray, coord_pillar);
 
     HgOpen(MAP_SIZE_X, MAP_SIZE_Y);
-    discription(meiroarray, first);
+    discription(meiroarray);
     HgGetChar();
 
     now_position = bfs(meiroarray, now_positions, queue_position);
-    first = 0;
     check_root(meiroarray, now_positions, now_position);
-    discription(meiroarray, first);
+    discription(meiroarray);
 
     HgGetChar();
     HgClose();
