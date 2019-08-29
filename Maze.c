@@ -9,14 +9,14 @@
 #define START 4
 #define GOAL 3
 #define NEWWALL 10
-#define ARRAYSIZEX 91
-#define ARRAYSIZEY 61
-#define MAPSIZEX 1010
-#define MAPSIZEY 710
-#define MAPOUTBLANK 50
+#define ARRAY_SIZE_X 91
+#define ARRAY_SIZE_Y 61
+#define MAP_SIZE_X 1010
+#define MAP_SIZE_Y 710
+#define MAP_OUT_BLANK 50
 #define BOXSIZE 10
 
-int pillar_max = (ARRAYSIZEX - 3) * (ARRAYSIZEY - 3) / 4;
+int pillar_max = (ARRAY_SIZE_X - 3) * (ARRAY_SIZE_Y - 3) / 4;
 
 /*
     wall = 3
@@ -63,17 +63,17 @@ bfs_st bfs_inf(x, y, coursex, coursey){
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //　配列に盤面情報を代入
-int insert_mapdata(int meiroarray[][ARRAYSIZEY]){
+int insert_mapdata(int meiroarray[][ARRAY_SIZE_Y]){
     int i, j;
-    for(i = 0; i < ARRAYSIZEX; i++){
-        for(j = 0; j < ARRAYSIZEY; j++){
-            if(i == 0 || j == 0 || i == ARRAYSIZEX - 1 || j == ARRAYSIZEY - 1){
+    for(i = 0; i < ARRAY_SIZE_X; i++){
+        for(j = 0; j < ARRAY_SIZE_Y; j++){
+            if(i == 0 || j == 0 || i == ARRAY_SIZE_X - 1 || j == ARRAY_SIZE_Y - 1){
                 meiroarray[i][j] = WALL;
             }else if(i % 2 == 0 && j % 2 == 0){
                 meiroarray[i][j] = PILLAR;
             }else if(i == 1 && j == 1){
                 meiroarray[i][j] = START;
-            }else if(i == ARRAYSIZEX - 2 && j == ARRAYSIZEY - 2){
+            }else if(i == ARRAY_SIZE_X - 2 && j == ARRAY_SIZE_Y - 2){
                 meiroarray[i][j] = GOAL;
             }else{
                 meiroarray[i][j] = ROAD;
@@ -84,11 +84,11 @@ int insert_mapdata(int meiroarray[][ARRAYSIZEY]){
 }
 
 //　柱をカウント、配列を構造体型で作成
-int check_pillar(int meiroarray[][ARRAYSIZEY], coord_t coord_pillar[pillar_max]){
+int check_pillar(int meiroarray[][ARRAY_SIZE_Y], coord_t coord_pillar[pillar_max]){
     int i, j;
     int count = 0;
-    for(i = 0; i < ARRAYSIZEX; i++){
-        for(j = 0; j < ARRAYSIZEY; j++){
+    for(i = 0; i < ARRAY_SIZE_X; i++){
+        for(j = 0; j < ARRAY_SIZE_Y; j++){
             if(meiroarray[i][j] == PILLAR){
                 coord_pillar[count] = newcoord(i, j);
                 //printf("%d %d\n", coord_pillar[count].arrayx, coord_pillar[count].arrayy);
@@ -101,7 +101,7 @@ int check_pillar(int meiroarray[][ARRAYSIZEY], coord_t coord_pillar[pillar_max])
 
 
 // 柱の順番をシャッフル
-int shaffle_pillar(int meiroarray[][ARRAYSIZEY], coord_t coord_pillar[pillar_max]){
+int shaffle_pillar(int meiroarray[][ARRAY_SIZE_Y], coord_t coord_pillar[pillar_max]){
     int hogex, hogey;
     int i = 0;
     int change_a, change_b;
@@ -118,24 +118,27 @@ int shaffle_pillar(int meiroarray[][ARRAYSIZEY], coord_t coord_pillar[pillar_max
     }
     return 0;
 }
-
+int change_newwall(int meiroarray[][ARRAY_SIZE_Y], int reset, int x, int y){
+    if(meiroarray[x][y] == NEWWALL){
+        if(reset == -1){
+            meiroarray[x][y] = WALL;
+        }else if(reset == 1){
+            if(x % 2 == 0 && y % 2 == 0){
+                meiroarray[x][y] = PILLAR;
+            }else{
+                meiroarray[x][y] = ROAD;
+            }
+        }
+    }
+    return 0;
+}
 
 //　壁の塗り替え作業
-int change_newwall(int meiroarray[][ARRAYSIZEY], int reset){
+int change_newwall_roop(int meiroarray[][ARRAY_SIZE_Y], int reset){
     int i, j;
-    for(i = 0; i < ARRAYSIZEX; i++){
-        for(j = 0; j < ARRAYSIZEY; j++){
-            if(meiroarray[i][j] == NEWWALL){
-                if(reset == -1){
-                    meiroarray[i][j] = WALL;
-                }else if(reset == 1){
-                    if(i % 2 == 0 && j % 2 == 0){
-                        meiroarray[i][j] = PILLAR;
-                    }else{
-                        meiroarray[i][j] = ROAD;
-                    }
-                }
-            }
+    for(i = 0; i < ARRAY_SIZE_X; i++){
+        for(j = 0; j < ARRAY_SIZE_Y; j++){
+            change_newwall(meiroarray, reset, i, j);
         }
     }
     return 0;
@@ -143,7 +146,7 @@ int change_newwall(int meiroarray[][ARRAYSIZEY], int reset){
 
 
 //finish = -1 reset = 1
-int extend_newwall(int meiroarray[][ARRAYSIZEY], int newwallx, int newwally, int reset){
+int extend_newwall(int meiroarray[][ARRAY_SIZE_Y], int newwallx, int newwally, int reset){
     if(reset == 0){
         int root;
 
@@ -169,7 +172,7 @@ int extend_newwall(int meiroarray[][ARRAYSIZEY], int newwallx, int newwally, int
 }
 
 
-int extend_wall(int meiroarray[][ARRAYSIZEY], coord_t coord_pillar[pillar_max]){
+int extend_wall(int meiroarray[][ARRAY_SIZE_Y], coord_t coord_pillar[pillar_max]){
     int i;
     int reset = 0;
     int newwallx, newwally;
@@ -188,7 +191,7 @@ int extend_wall(int meiroarray[][ARRAYSIZEY], coord_t coord_pillar[pillar_max]){
         if(reset == 1){
             i--;
         }
-        change_newwall(meiroarray, reset);
+        change_newwall_roop(meiroarray, reset);
     }
     return 0;
 }
@@ -200,7 +203,7 @@ int extend_wall(int meiroarray[][ARRAYSIZEY], coord_t coord_pillar[pillar_max]){
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-int bfs(int meiroarray[][ARRAYSIZEY], bfs_st now_positions[10000], bfs_st queue_position[10000]){
+int bfs(int meiroarray[][ARRAY_SIZE_Y], bfs_st now_positions[10000], bfs_st queue_position[10000]){
     coord_t course[4] = {newcoord(0, 1), newcoord(0, -1), newcoord(1, 0), newcoord(-1, 0)};
     bfs_st queue;
     bfs_st new_queue;
@@ -225,7 +228,7 @@ int bfs(int meiroarray[][ARRAYSIZEY], bfs_st now_positions[10000], bfs_st queue_
                 new_queue.lastcoursex = course[i].arrayx;
                 new_queue.lastcoursey = course[i].arrayy;
 
-                if(new_queue.arrayx <= 0 || new_queue.arrayy <= 0 || new_queue.arrayx >= MAPSIZEX - 1 || new_queue.arrayy >= MAPSIZEY - 1){
+                if(new_queue.arrayx <= 0 || new_queue.arrayy <= 0 || new_queue.arrayx >= MAP_SIZE_X - 1 || new_queue.arrayy >= MAP_SIZE_Y - 1){
                     continue;
                 }
 
@@ -249,7 +252,7 @@ int bfs(int meiroarray[][ARRAYSIZEY], bfs_st now_positions[10000], bfs_st queue_
 
 
 //　最後に正解のルートをゴールからスタートに向けて進ませていき、meiroarrayの値を変更する作業
-int check_root(int meiroarray[][ARRAYSIZEY], bfs_st now_positions[10000], int now_position){
+int check_root(int meiroarray[][ARRAY_SIZE_Y], bfs_st now_positions[10000], int now_position){
     int coordx, coordy;
     int nextx, nexty;
     for(int i = now_position; i >= 0; i--){
@@ -285,19 +288,19 @@ int check_color(int color){
 }
 
 //　描写、　使い回し推奨
-int discription(int meiroarray[][ARRAYSIZEY], int first){
+int discription(int meiroarray[][ARRAY_SIZE_Y], int first){
     int color;
     int i, j;
-    for(i = 0; i < ARRAYSIZEX; i++){
-        for(j = 0; j < ARRAYSIZEY; j++){
+    for(i = 0; i < ARRAY_SIZE_X; i++){
+        for(j = 0; j < ARRAY_SIZE_Y; j++){
             if(meiroarray[i][j] == START || meiroarray[i][j] == GOAL || first != 1){
                 color = meiroarray[i][j];
                 check_color(color);
-                HgBoxFill(MAPOUTBLANK + i * BOXSIZE, MAPOUTBLANK + j * BOXSIZE, BOXSIZE, BOXSIZE, 1);
+                HgBoxFill(MAP_OUT_BLANK + i * BOXSIZE, MAP_OUT_BLANK + j * BOXSIZE, BOXSIZE, BOXSIZE, 1);
             }else{
                 color = meiroarray[i][j];
                 check_color(color);
-                HgBoxFill(MAPOUTBLANK + i * BOXSIZE, MAPOUTBLANK + j * BOXSIZE, BOXSIZE, BOXSIZE, 1);
+                HgBoxFill(MAP_OUT_BLANK + i * BOXSIZE, MAP_OUT_BLANK + j * BOXSIZE, BOXSIZE, BOXSIZE, 1);
             }
         }
     }
@@ -309,7 +312,7 @@ int discription(int meiroarray[][ARRAYSIZEY], int first){
 
 int main(){
     srandom(time(NULL));
-    int meiroarray[ARRAYSIZEX][ARRAYSIZEY] = {0};
+    int meiroarray[ARRAY_SIZE_X][ARRAY_SIZE_Y] = {0};
     int now_position;
     int first = 1;
     coord_t coord_pillar[pillar_max];
@@ -323,7 +326,7 @@ int main(){
     shaffle_pillar(meiroarray, coord_pillar);
     extend_wall(meiroarray, coord_pillar);
 
-    HgOpen(MAPSIZEX, MAPSIZEY);
+    HgOpen(MAP_SIZE_X, MAP_SIZE_Y);
     discription(meiroarray, first);
     HgGetChar();
 
