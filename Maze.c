@@ -209,7 +209,7 @@ int bfs(int meiroarray[][ARRAY_SIZE_Y], bfs_st now_positions[10000], bfs_st queu
     bfs_st new_queue;
     int end = 0;
     int now_position = 0;
-    int top_queue = 0;  //
+    int top_queue = 0;  
     int i;
     while(end == 0){
         // dequeue
@@ -258,15 +258,15 @@ int check_root(int meiroarray[][ARRAY_SIZE_Y], bfs_st now_positions[10000], int 
     for(int i = now_position; i >= 0; i--){
         coordx = now_positions[i].arrayx;
         coordy = now_positions[i].arrayy;
-        if(i == now_position){
+        if(i == now_position || (nextx == coordx && nexty == coordy)){
             meiroarray[coordx][coordy] = GOAL;
             nextx = coordx - now_positions[i].lastcoursex;
             nexty = coordy - now_positions[i].lastcoursey;
-        }else if(nextx == coordx && nexty == coordy){
+        }/*else if(nextx == coordx && nexty == coordy){
             meiroarray[coordx][coordy] = GOAL;
             nextx = coordx - now_positions[i].lastcoursex;
             nexty = coordy - now_positions[i].lastcoursey;
-        }
+        }*/
     }
     return 0;
 }
@@ -287,7 +287,7 @@ int check_color(int color){
     return 0;
 }
 
-//　描写、　使い回し推奨
+//　描写
 int discription(int meiroarray[][ARRAY_SIZE_Y]){
     int color;
     int i, j;
