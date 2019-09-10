@@ -288,7 +288,7 @@ int check_color(int color){
 }
 
 //　描写
-int discription(int meiroarray[][ARRAY_SIZE_Y]){
+int description(int meiroarray[][ARRAY_SIZE_Y]){
     int color;
     int i, j;
     for(i = 0; i < ARRAY_SIZE_X; i++){
@@ -320,12 +320,12 @@ int main(){
     extend_wall(meiroarray, coord_pillar);
 
     HgOpen(MAP_SIZE_X, MAP_SIZE_Y);
-    discription(meiroarray);
+    description(meiroarray);
     HgGetChar();
 
     now_position = bfs(meiroarray, now_positions, queue_position);
     check_root(meiroarray, now_positions, now_position);
-    discription(meiroarray);
+    description(meiroarray);
 
     HgGetChar();
     HgClose();
